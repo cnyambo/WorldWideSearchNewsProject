@@ -60,7 +60,7 @@ class UserFavorites(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
-    article_id = db.Column(db.Integer, nullable=False)
+    article_id = db.Column(db.String(20), nullable=False)
 
     username = db.Column(db.String(20), db.ForeignKey('users.username'))
 
