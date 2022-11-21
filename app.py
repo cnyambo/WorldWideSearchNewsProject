@@ -14,7 +14,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] ='abc123'
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
-API_BASE_URL ='https://newsapi.org/'
+API_BASE_URL ='https://newsapi.org/v2'
 
 connect_db(app)
 
@@ -26,7 +26,7 @@ toolbar = DebugToolbarExtension(app)
 
 @app.route('/')
 def home_page():
-    return redirect('/register')
+    return redirect('/login')
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -75,8 +75,19 @@ def show_user(username):
     user = User.query.get_or_404(username)
     if user.username == session['username']:
         user = User.query.get(username)
-        news = requests.get('https://newsapi.org/v2/everything',
+        news = requests.get(f'{API_BASE_URL}/everything',
             params={'domains':'wsj.com','apiKey':ALLARTICLESNEWS_KEY})
-  
-        return redirect('/')
+ 
+        all_news = news.json()
+
+        return render_template('news.html',user= user,news=all_news)
     return redirect('/')
+
+
+ 
+
+@app.route('/logout')
+def logout_user():
+    session.pop('username')
+    flash("Goodbye!", "info")
+    return redirect('/')        

@@ -1,0 +1,36 @@
+{% extends 'base.html'  %}
+
+{% block content %}
+ 
+    <div>
+        
+        {% for article in news['articles'] %}
+         
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-default" id="panel">
+                    <p><span>source:</span> {{ article.source.name }}</p>
+                    <p><span>author:</span> {{ article.author }}</p>
+                    <p><span>title:</span> {{ article.title }}</p>
+                    <p><span>description:</span>{{ article.description }}</p>
+                    <p><span>published At:</span>{{ article.publishedAt }}</p>
+                   
+                    <p>
+                        <a class="btn btn-primary" data-toggle="collapse" href="#readmore" role="button" data-target="#readmore" aria-expanded="false" aria-controls="collapseExample">
+                          Read More
+                        </a>
+                   
+                    </p>
+                    <div class="collapse" id="readmore">
+                    <div class="card card-body">
+                        {{ article.content }}
+                    </div>
+                    </div>
+                    <p><a href="{{ article.url }}"> Visit to url </a></p>  
+                </div>
+            </div>
+           
+        {%  endfor %}
+      </div>
+  </div>
+ 
+{% endblock %}
