@@ -15,7 +15,7 @@ This project has two phases: firstly I will analyze the database from the given 
 The project will use the following languages:
 -	For the database I will use Postgresql with sqlAlchemy
 -	For programming I will use Python, JQuery, Html, CSS, JavaScript, JSON
--	I will use the API available on the link  https://newsapi.org/ 
+-	I will use the API available on the link https://www.thenewsapi.com/ 
 IV.	Database Schema
 The database of this project called “news_db” will have the below tables:
 -	Users

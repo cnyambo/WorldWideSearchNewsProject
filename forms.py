@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField,EmailField
-from wtforms.validators import InputRequired
+from wtforms.validators import InputRequired, Optional
 
 
 class RegisterForm(FlaskForm):
@@ -17,3 +17,11 @@ class LoginForm(FlaskForm):
 
     username = StringField("Username", validators=[InputRequired()])
     password = PasswordField("Password", validators=[InputRequired()])
+
+  
+class SearchForm(FlaskForm):
+    """Form for search of news."""
+
+    categories = StringField("Categories", validators=[Optional()])
+    search = StringField("Search", validators=[Optional()])
+    language = StringField("Language", validators=[Optional()])

@@ -17,10 +17,33 @@
           
           <nav class="navbar navbar-light bg-primary justify-content-between ">
             <div class="container">
-              <a href="/" class="navbar-brand text-light">Home Page</a>
+              
               <ul class="nav navbar-nav flex-row float-right">
                 {% if session['username'] %}
+                <li class="nav-item">
+                  <a href="/users/{{session['username']}}" class="navbar-brand text-light">Top Stories</a>
+                </li>
+                <!--<li class="nav-item">
+                  <a class="nav-link pr-3 text-light" href="/search">search news</a>
+                  
+                </li>-->
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    search news
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="/searchAll/{{session['username']}}">All News</a>
+                    <a class="dropdown-item" href="/searchNews/{{session['username']}}">Search</a>
+    
+                  </div>
+                </li>
                 
+                
+                <!--
+                <li class="nav-item">
+                  <a class="nav-link pr-3 text-light" href="/users/{{session['username']}}/delete">delete account</a>
+                  
+                </li>-->
                 <li><a class="nav-link pr-3 text-light" href="/logout">Logout</a></li>
                 {% else %}
                 <li class="nav-item">
@@ -45,7 +68,7 @@
           <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 
           <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-          <script src="{{ url_for('static', filename='form.js') }}"></script>
+          <!--<script src="{{ url_for('static', filename='form.js') }}"></script>-->
           <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
           <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
           <!--<script src="static/stlyesheets/app.js"></script>-->

@@ -1,9 +1,9 @@
 from flask import Flask, render_template, redirect, session, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User,UserFavorites
-from forms import RegisterForm, LoginForm 
+from forms import RegisterForm, LoginForm, SearchForm 
 from sqlalchemy.exc import IntegrityError
-from api_secrets import API_SECRET_KEY, APPLENEWS_KEY, TESLANEWS_KEY, TOPBUSINESSNEWS_KEY, TECHCRUSHNEWS_KEY, ALLARTICLESNEWS_KEY
+from api_secrets import API_SECRET_KEY
 from flask import g
 import requests
  
@@ -14,7 +14,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] ='abc123'
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
-API_BASE_URL ='https://newsapi.org/v2'
+API_BASE_URL ='https://api.thenewsapi.com/v1/news'
+
 
 connect_db(app)
 
@@ -67,24 +68,51 @@ def login_user():
 
 
 @app.route('/users/<username>')
-def show_user(username):
-    """show user"""
+def log_user(username):
+    """user go to homepage"""
     if 'username' not in session:
         flash("Please login first!", "danger")
         return redirect('/login')
     user = User.query.get_or_404(username)
     if user.username == session['username']:
         user = User.query.get(username)
-        news = requests.get(f'{API_BASE_URL}/everything',
-            params={'domains':'wsj.com','apiKey':ALLARTICLESNEWS_KEY})
+        news = requests.get(f'{API_BASE_URL}/top',
+            params={'api_token':API_SECRET_KEY})
  
         all_news = news.json()
 
-        return render_template('news.html',user= user,news=all_news)
+        return render_template('news.html',user= user,news=all_news )
     return redirect('/')
 
+@app.route('/searchAll/<username>')
+def show_all_news(username):
+    """show all news"""
+    news = requests.get(f'{API_BASE_URL}/all',
+        params={'api_token':API_SECRET_KEY,'limit':50})
+    all_news = news.json()
+    return render_template('news.html',user= username,news=all_news )
 
- 
+@app.route('/searchNews/<username>', methods=['GET', 'POST'])
+def search_form(username):
+    """search for news"""
+    form = SearchForm()
+    if form.validate_on_submit():
+        categories, search, lang = (form.categories.data, form.search.data, form.language.data)
+        if lang:
+            news = requests.get(f'{API_BASE_URL}/all',
+                params={'api_token':API_SECRET_KEY, 'categories':categories, 'search':search, 'language':lang, 'limit':50})
+        else: 
+            news = requests.get(f'{API_BASE_URL}/all',
+                params={'api_token':API_SECRET_KEY, 'categories':categories, 'search':search, 'limit':50})   
+        all_news = news.json()
+        data = [article for article in  all_news['data']]  
+        for i in data:
+            favorites_news = UserFavorites(article_id =i['uuid'], username=username)
+            db.session.add(favorites_news)      
+        db.session.commit()
+
+        return render_template('search.html',user=username, news=all_news)  
+    return render_template('search_form.html',form=form)    
 
 @app.route('/logout')
 def logout_user():
