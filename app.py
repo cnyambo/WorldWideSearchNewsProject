@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, session, flash
+from flask import Flask, render_template, redirect, session, flash, request
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User,UserFavorites
 from forms import RegisterForm, LoginForm, SearchForm 
@@ -16,13 +16,23 @@ app.config['SECRET_KEY'] ='abc123'
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 API_BASE_URL ='https://api.thenewsapi.com/v1/news'
 
-
+CURR_USER_KEY = "curr_user"
 connect_db(app)
 
 with app.app_context():
     db.create_all()
 
 toolbar = DebugToolbarExtension(app)
+
+@app.before_request
+def add_user_to_g():
+    """If we're logged in, add curr user to Flask global."""
+
+    if CURR_USER_KEY in session:
+        g.user = User.query.get(session[CURR_USER_KEY])
+
+    else:
+        g.user = None
 
 
 @app.route('/')
@@ -77,7 +87,7 @@ def log_user(username):
     if user.username == session['username']:
         user = User.query.get(username)
         news = requests.get(f'{API_BASE_URL}/top',
-            params={'api_token':API_SECRET_KEY})
+            params={'api_token':API_SECRET_KEY, 'language':'en'})
  
         all_news = news.json()
 
@@ -92,8 +102,8 @@ def show_all_news(username):
     all_news = news.json()
     return render_template('news.html',user= username,news=all_news )
 
-@app.route('/searchNews/<username>', methods=['GET', 'POST'])
-def search_form(username):
+@app.route('/searchNews/<username>/<language>', methods=['GET', 'POST'])
+def search_form(username, language):
     """search for news"""
     form = SearchForm()
     if form.validate_on_submit():
@@ -103,7 +113,7 @@ def search_form(username):
                 params={'api_token':API_SECRET_KEY, 'categories':categories, 'search':search, 'language':lang, 'limit':50})
         else: 
             news = requests.get(f'{API_BASE_URL}/all',
-                params={'api_token':API_SECRET_KEY, 'categories':categories, 'search':search, 'limit':50})   
+                params={'api_token':API_SECRET_KEY, 'categories':categories, 'search':search,'language':language,'limit':50})   
         all_news = news.json()
         data = [article for article in  all_news['data']]  
         for i in data:
@@ -113,6 +123,46 @@ def search_form(username):
 
         return render_template('search.html',user=username, news=all_news)  
     return render_template('search_form.html',form=form)    
+
+@app.route('/newsAll/<lang>')
+def change_lang(lang):
+    """this will help users to pick the languages they want"""
+    #rule = request.url_rule
+    rule = request.referrer
+    user = session['username']
+    news =''
+       
+    if 'searchAll' in rule:
+        news = requests.get(f'{API_BASE_URL}/all',
+        params={'api_token':API_SECRET_KEY, 'language':lang,'limit':50})
+    elif 'searchNews' in rule:
+        redirect(f'/searchNews/{user}>/{lang}')  
+    else:
+        news = requests.get(f'{API_BASE_URL}/top',
+            params={'api_token':API_SECRET_KEY, 'language':lang})
+    print(f'************************************{user}' )
+    all_news = news.json()
+    if   len(all_news['data']) >0:
+        return render_template('news.html',user= user,news=all_news )
+    else:
+        flash(f'No news available for {lang}', 'danger')
+        return redirect(f'/users/{user}')
+
+
+@app.route('/user/delete', methods=["POST"])
+def delete_user():
+    """Delete user."""
+
+    if not session['username']:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    del session['username']
+    db.session.delete(session['username'])
+    db.session.commit()
+
+    return redirect("/signup")
+
 
 @app.route('/logout')
 def logout_user():

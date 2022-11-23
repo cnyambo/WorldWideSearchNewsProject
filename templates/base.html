@@ -23,27 +23,57 @@
                 <li class="nav-item">
                   <a href="/users/{{session['username']}}" class="navbar-brand text-light">Top Stories</a>
                 </li>
-                <!--<li class="nav-item">
-                  <a class="nav-link pr-3 text-light" href="/search">search news</a>
-                  
-                </li>-->
+      
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    search news
+                    Search News
                   </a>
                   <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                     <a class="dropdown-item" href="/searchAll/{{session['username']}}">All News</a>
-                    <a class="dropdown-item" href="/searchNews/{{session['username']}}">Search</a>
+                    <a class="dropdown-item" href="/searchNews/{{session['username']}}/{{'all'}}">Search</a>
     
                   </div>
                 </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Language
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="/newsAll/{{'ar'}}">Arabic</a>
+                    <a class="dropdown-item" href="/newsAll/{{'bn'}}">Bengali</a>
+                    <a class="dropdown-item" href="/newsAll/{{'bg'}}">Bulgarian</a>
+                    <a class="dropdown-item" href="/newsAll/{{'zh'}}">Chinese</a>
+                    <a class="dropdown-item" href="/newsAll/{{'hr'}}">Croatian</a>
+                    <a class="dropdown-item" href="/newsAll/{{'cs'}}">Czech</a>
+                    <a class="dropdown-item" href="/newsAll/{{'da'}}">Danish</a>
+                    <a class="dropdown-item" href="/newsAll/{{'nl'}}">Dutch</a>
+                    <a class="dropdown-item" href="/newsAll/{{'en'}}">English</a>
+                    <a class="dropdown-item" href="/newsAll/{{'et'}}">Estonian</a>
+                    <a class="dropdown-item" href="/newsAll/{{'fi'}}">Finnish</a>
+                    <a class="dropdown-item" href="/newsAll/{{'fr'}}">French</a>
+                    <a class="dropdown-item" href="/newsAll/{{'de'}}">German</a>
+                    <a class="dropdown-item" href="/newsAll/{{'el'}}">Greek</a>
+                    <a class="dropdown-item" href="/newsAll/{{'he'}}">Hebrew</a>
+                    <a class="dropdown-item" href="/newsAll/{{'hi'}}">Hindi</a>
+                    <a class="dropdown-item" href="/newsAll/{{'hu'}}">Hungarian</a>
+                    <a class="dropdown-item" href="/newsAll/{{'id'}}">Indonesian</a>
+                    <a class="dropdown-item" href="/newsAll/{{'it'}}">Italian</a>
+                    <a class="dropdown-item" href="/newsAll/{{'ja'}}">Japanese</a>
+                    <a class="dropdown-item" href="/newsAll/{{'ko'}}">Korean</a>
+                    <a class="dropdown-item" href="/newsAll/{{'lt'}}">Lithuanian</a>
+                    <a class="dropdown-item" href="/newsAll/{{'no'}}">Norwegian</a>
+                    <a class="dropdown-item" href="/newsAll/{{'fa'}}">Persian</a>
+                    <a class="dropdown-item" href="/newsAll/{{'pl'}}">Polish</a>
+                    <a class="dropdown-item" href="/newsAll/{{'es'}}">Spanish</a>
+                    <a class="dropdown-item" href="/newsAll/{{'se'}}">Swedish</a>
+                    <a class="dropdown-item" href="/newsAll/{{'tr'}}">Turkish</a>                  
+                  </div>
+                </li>
                 
-                
-                <!--
                 <li class="nav-item">
-                  <a class="nav-link pr-3 text-light" href="/users/{{session['username']}}/delete">delete account</a>
+                  <a class="nav-link pr-3 text-light" href="/user/{{session['username']}}/delete">Delete Account</a>
                   
-                </li>-->
+                </li>
                 <li><a class="nav-link pr-3 text-light" href="/logout">Logout</a></li>
                 {% else %}
                 <li class="nav-item">
