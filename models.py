@@ -48,7 +48,6 @@ class User(db.Model):
         """
 
         u = User.query.filter_by(username=username).first()
-
         if u and bcrypt.check_password_hash(u.password, pwd):
             return u
         else:

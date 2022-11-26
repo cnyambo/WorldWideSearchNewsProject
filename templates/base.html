@@ -19,9 +19,9 @@
             <div class="container">
               
               <ul class="nav navbar-nav flex-row float-right">
-                {% if session['username'] %}
+                {% if session['username']  %}
                 <li class="nav-item">
-                  <a href="/users/{{session['username']}}" class="navbar-brand text-light">Top Stories</a>
+                  <a href="/users/{{session['username']}}/all" class="navbar-brand text-light">Top Stories</a>
                 </li>
       
                 <li class="nav-item dropdown">
@@ -29,7 +29,7 @@
                     Search News
                   </a>
                   <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="/searchAll/{{session['username']}}">All News</a>
+                    <a class="dropdown-item" href="/searchAll/{{session['username']}}/{{'all'}}">All News</a>
                     <a class="dropdown-item" href="/searchNews/{{session['username']}}/{{'all'}}">Search</a>
     
                   </div>
@@ -70,10 +70,24 @@
                   </div>
                 </li>
                 
+                
+                {% if session['role'] =='admin' %}
+                    <li class="nav-item">
+                      <a class="nav-link text-light" href="/users/{{session['username']}}/add">Add User</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link text-light" href="/users/{{session['username']}}/update">Edit User</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link pr-3 text-light" href="/users/{{session['username']}}/delete_account">Delete Account</a>
+                      
+                    </li>
+                {% elif session['role'] =='guest' %}
                 <li class="nav-item">
-                  <a class="nav-link pr-3 text-light" href="/user/{{session['username']}}/delete">Delete Account</a>
+                  <a class="nav-link pr-3 text-light" href="/users/{{session['username']}}/delete">Delete Account</a>
                   
-                </li>
+                </li>    
+                {% endif %}
                 <li><a class="nav-link pr-3 text-light" href="/logout">Logout</a></li>
                 {% else %}
                 <li class="nav-item">
