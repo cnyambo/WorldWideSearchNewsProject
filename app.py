@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, session, flash, request
 from flask_debugtoolbar import DebugToolbarExtension
-from models import connect_db, db, User,UserFavorites
+from models import connect_db, db, User,UserFavorites, Articles
 from forms import RegisterForm, LoginForm, SearchForm, UserAddForm, UserUpdateForm
 from sqlalchemy.exc import IntegrityError
 from api_secrets import API_SECRET_KEY
@@ -23,6 +23,31 @@ with app.app_context():
     db.create_all()
 
 toolbar = DebugToolbarExtension(app)
+
+def add_article():
+    existedArticles = Articles.query.all()
+    news = requests.get(f'{API_BASE_URL}/all', params={'api_token':API_SECRET_KEY})   
+    topnews = requests.get(f'{API_BASE_URL}/top', params={'api_token':API_SECRET_KEY}) 
+    all_news = news.json()
+    topall = topnews.json()
+    newsdata = [article for article in  all_news['data']] 
+    newstop = [article for article in  topall['data']] 
+    data = newsdata + newstop
+    if len(existedArticles) > 0:
+        existedData = [article.uuid for article in  existedArticles]
+        for i in data:
+            if i['uuid'] in existedData:
+                continue
+            else:
+                articles = Articles(uuid =i['uuid'])
+                db.session.add(articles)    
+    else:
+        for i in data:
+            articles = Articles(uuid =i['uuid'])
+            db.session.add(articles)              
+    db.session.commit()
+
+
 
 @app.before_request
 def add_user_to_g():
@@ -81,12 +106,15 @@ def login_user():
 @app.route('/users/<username>/<language>')
 def log_user(username,language):
     """user go to homepage"""
+    add_article()
+    
     if 'username' not in session:
         flash("Please login first!", "danger")
         return redirect('/login')
-    user = User.query.get_or_404(username)
+    user = User.query.filter_by(username = username).first()
+
     if user.username == session['username']:
-        user = User.query.get(username)
+        
         if language and language!='all':
             news = requests.get(f'{API_BASE_URL}/top',
                 params={'api_token':API_SECRET_KEY, 'language':language,'limit':50})
@@ -144,7 +172,14 @@ def search_form(username, language):
         all_news = news.json()
         data = [article for article in  all_news['data']]  
         for i in data:
-            favorites_news = UserFavorites(article_id =i['uuid'], username=username)
+            article  = Articles.query.filter_by(uuid = i['uuid']).first()
+            if article is None:
+                newarticle  = Articles(uuid =i['uuid'])
+                db.session.add(newarticle)
+                db.session.commit()
+                article = Articles.query.filter_by(uuid = i['uuid']).first()
+            user = User.query.filter_by(username =username).first()
+            favorites_news = UserFavorites(article_id =article.id, user_id=user.id)
             db.session.add(favorites_news)      
         db.session.commit()
 
@@ -154,7 +189,6 @@ def search_form(username, language):
 @app.route('/newsAll/<lang>')
 def change_lang(lang):
     """this will help users to pick the languages they want"""
-    #rule = request.url_rule
     rule = request.referrer
     user = session['username']
     #news =''
@@ -176,7 +210,7 @@ def delete_user(username):
         flash("Please login first!", "danger")
         return redirect('/register')
      deluser = User.query.get_or_404(username)
-     favorites=UserFavorites.query.filter_by(username = deluser.username)
+     favorites=UserFavorites.query.filter_by(user_id = deluser.id)
      if deluser.username == session['username']:
         for i in favorites:
             db.session.delete(i)
@@ -229,7 +263,6 @@ def edit_user(admin_username, username):
     form.email.data = user.email
     form.address.data = user.address
     form.role.data = user.role
-    print(f'*************************************{user.username}')
     if form.validate_on_submit():
         user.username = form.username.data  
         user.full_name = form.full_name.data  

@@ -1,7 +1,7 @@
 from urllib.robotparser import RobotFileParser
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-from sqlalchemy.orm import  relationship
+from sqlalchemy.orm import relationship
 
 db = SQLAlchemy()
 
@@ -18,27 +18,29 @@ class User(db.Model):
 
     __tablename__ = 'users'
 
-    username = db.Column(db.String(50), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True )
 
-    password = db.Column(db.Text, nullable=False)
+    username = db.Column(db.String(50), nullable=False)
+
+    password = db.Column(db.String(250), nullable=False)
 
     email = db.Column(db.String(100),nullable=False, unique=True)
     
-    full_name = db.Column(db.String(100),nullable=False)
+    full_name = db.Column(db.String(100),nullable=True)
 
-    address = db.Column(db.String(250),nullable=False)
+    address = db.Column(db.String(250),nullable=True)
 
     role = db.Column(db.String(50),nullable=False)
 
 
     @classmethod
-    def register(cls, username, pwd, email, fname, address, role):
+    def register(cls, username, password, email, full_name, address, role):
         """Register user w/hashed password & return user."""
 
-        hashed = bcrypt.generate_password_hash(pwd)
+        hashed = bcrypt.generate_password_hash(password)
         hashed_utf8 = hashed.decode("utf8")
 
-        return cls(username=username, password=hashed_utf8, email=email, full_name = fname, address = address, role = role)
+        return cls(username=username, password=hashed_utf8, email=email, full_name = full_name, address = address, role = role)
 
     @classmethod
     def authenticate(cls, username, pwd):
@@ -48,10 +50,18 @@ class User(db.Model):
         """
 
         u = User.query.filter_by(username=username).first()
-        if u and bcrypt.check_password_hash(u.password, pwd):
+        if not u and not bcrypt.check_password_hash(u.password, pwd):
+            return False 
+        else:    
             return u
-        else:
-            return False
+
+class Articles(db.Model):
+    __tablename__ = 'articles'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+    uuid = db.Column(db.String(100), nullable=False, unique=True)
+
 
 
 class UserFavorites(db.Model):
@@ -59,9 +69,9 @@ class UserFavorites(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
-    article_id = db.Column(db.String(100), nullable=False)
+    article_id = db.Column(db.Integer, db.ForeignKey('articles.id'))
 
-    username = db.Column(db.String(50), db.ForeignKey('users.username'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     user = db.relationship('User', backref="users_favorites")
 
