@@ -15,16 +15,18 @@ This application has been built using the below tools:
 
  To use this web application users should first  register. By default all the users are 'guest', this can be modified by the administrator of the system. After registering to the system, the user will be automatically land to the home page of the system which composed of different menus according to the user's role.
  The guest will have access to the below menus:
+
     - Search News: this menu has 2 submenus (all News and search.)
         - All News will display all the top 50 most recent news
         - Search will display a form where the user can search by category, title (in search), and language
     - Language: users can select any language the want to the news from
     - Delete account: Users can be able to delete their account
     - Logout to logout from the system
+    
 The administrator will have access to all the functionalities above and include the below ones:
     - Add User: to add a new user
     - Edit user: to edit user's information
     - List of users: this display the list of all the users, from the list, there is a link to each user that allow the administrator to see all the articles visited by users. 
     - Delete Account: the administrator can delete a user
     
-    
+
