@@ -1,0 +1,40 @@
+{% extends 'base.html'  %}
+
+{% block content %}
+ 
+    <div>
+        <div class="row header" style="text-align:center;color:green">
+            <h3>Articles Visited by user {{user.full_name}}</h3>
+        </div>
+        <div>
+            <table id="example" class="table table-striped table-bordered" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Source</th>
+                        <th>Title</th>
+                        <th>Snippet</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>URL</th>
+                        <th>Published At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for news in news %}
+                        <tr>
+                            <td>{{news.source}}</a></td>
+                            <td>{{news.title}}</td>
+                            <td>{{news.snippet}}</td>
+                            <td>{{news.categories}}</td>
+                            <td>{{news.description}}</td>
+                            <td>{{news.url}}</td>
+                            <td>{{news.published_at}}</td>
+                        </tr>
+            
+                    {%  endfor %}
+                </tbody>
+            </table>
+      </div>
+  </div>
+ 
+{% endblock %}

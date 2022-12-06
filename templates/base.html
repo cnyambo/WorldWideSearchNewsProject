@@ -10,7 +10,8 @@
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0/css/all.min.css">
      <!--<link rel="stylesheet" href="static/stlyesheets/style.css">-->
      <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-          
+     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css">
+         
     <title>{% block title%} {% endblock %}</title>
   </head>
   <body class ="content">
@@ -79,6 +80,10 @@
                       <a class="nav-link text-light" href="/users/{{session['username']}}/update">Edit User</a>
                     </li>
                     <li class="nav-item">
+                      <a class="nav-link pr-3 text-light" href="/users">List of Users</a>
+                      
+                    </li>
+                    <li class="nav-item">
                       <a class="nav-link pr-3 text-light" href="/users/{{session['username']}}/delete_account">Delete Account</a>
                       
                     </li>
@@ -115,7 +120,8 @@
           <!--<script src="{{ url_for('static', filename='form.js') }}"></script>-->
           <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
           <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-          <!--<script src="static/stlyesheets/app.js"></script>-->
+          <script type="text/javascript" src="https://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>  
+          <script src="static/stlyesheets/app.js"></script>
 
 </body>
 </html>

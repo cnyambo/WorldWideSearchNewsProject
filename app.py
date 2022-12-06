@@ -5,7 +5,7 @@ from forms import RegisterForm, LoginForm, SearchForm, UserAddForm, UserUpdateFo
 from sqlalchemy.exc import IntegrityError
 from api_secrets import API_SECRET_KEY
 from flask import g
-import requests
+import requests, json
  
 
 app = Flask(__name__)
@@ -191,7 +191,6 @@ def change_lang(lang):
     """this will help users to pick the languages they want"""
     rule = request.referrer
     user = session['username']
-    #news =''
        
     if 'searchAll' in rule:
         return redirect(f'/searchAll/{user}/{lang}') 
@@ -227,8 +226,8 @@ def add_user(username):
     """ Add users """
     form = UserAddForm()
     if form.validate_on_submit():
-        name, pwd, email, fname, address, role = (form.username.data, form.password.data, form.email.data, form.full_name.data, form.address.data, form.role.data)
-        new_user = User.register(name, pwd, email,fname,address,role)
+        name, password, email, full_name, address, role = (form.username.data, form.password.data, form.email.data, form.full_name.data, form.address.data, form.role.data)
+        new_user = User.register(name, password, email,full_name,address,role)
         db.session.add(new_user)
         try:
             db.session.commit()
@@ -257,7 +256,7 @@ def get_edited_user(admin_username):
 def edit_user(admin_username, username):
     """edit user"""
     form = UserAddForm()    
-    user = User.query.get_or_404(username)
+    user = User.query.filter_by(username=username).first()
     form.username.data = user.username
     form.full_name.data = user.full_name
     form.email.data = user.email
@@ -276,6 +275,26 @@ def edit_user(admin_username, username):
     
     return render_template('/edit_user.html', form = form , user=user)
  
+@app.route('/users', methods=['GET'])
+def list_user():
+    """list of all the application users""" 
+    users = User.query.all()    
+    return render_template('/users.html',users=users)
+
+
+@app.route('/user_visited_views/<user_id>', methods=['GET'])
+def user_visited_views(user_id):
+    """list of all the application users""" 
+
+    user = User.query.get(user_id)
+    favorites = UserFavorites.query.filter_by(user_id=user_id).all()
+    userArticles = [article.article_id for article in favorites]
+    news =[]
+    for i in userArticles:
+        article = Articles.query.get_or_404(i)
+        single_news = requests.get(f'{API_BASE_URL}/uuid/{article.uuid}', params={'api_token':API_SECRET_KEY})
+        news.append(single_news.json())
+    return render_template(f'/users_favorites.html', user=user, news=news)
 
 @app.route('/users/<admin_username>/delete_account', methods=['GET', 'POST'])
 def get_deleted_user(admin_username):

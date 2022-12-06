@@ -33,7 +33,7 @@ class UserAddForm(FlaskForm):
     email = StringField("E-mail", validators=[InputRequired(), Email()])
     password = PasswordField("Password", validators=[Length(min=6)])
     full_name = StringField("Full Name", validators=[InputRequired()])
-    address = StringField("Address", validators=[InputRequired()])
+    address = StringField("Address", validators=[Optional()])
     role = SelectField("Role",  choices=[('admin', 'Administrator'), ('guest', 'Guest')])
 
 
