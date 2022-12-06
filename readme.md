@@ -22,8 +22,9 @@ This application has been built using the below tools:
     - Language: users can select any language the want to the news from
     - Delete account: Users can be able to delete their account
     - Logout to logout from the system
-    
+
 The administrator will have access to all the functionalities above and include the below ones:
+
     - Add User: to add a new user
     - Edit user: to edit user's information
     - List of users: this display the list of all the users, from the list, there is a link to each user that allow the administrator to see all the articles visited by users. 
